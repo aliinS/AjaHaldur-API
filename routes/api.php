@@ -19,5 +19,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/test', function () {
-    return 'Test successful';
+    return response()->json([
+        'data' => [
+            '1' => 1,
+            '2' => 2,
+            '3' => 1,
+            '4' => 1,
+            '5' => 1,
+            '6' => 1,
+        ]
+    ]);
 });
