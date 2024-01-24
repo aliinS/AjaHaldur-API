@@ -32,7 +32,16 @@ Route::get('/test', function () {
     ]);
 });
 
+// Route::post('/register', [AuthController::class, 'register']);
+
+// // Login an existing user
+// Route::post('/login', [AuthController::class, 'login']);
+
 Route::post('/register', [AuthController::class, 'register']);
 
-// Login an existing user
-Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('api')->group(function (): void {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
+});

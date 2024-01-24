@@ -35,7 +35,12 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        return response()->json(['user' => $user, 'message' => 'Registration successful'], 201);
+        // return response()->json(['user' => $user, 'message' => 'Registration successful'], 201);
+        $token = Auth::guard('api')->login($user);
+
+        $cookie = Cookie::make('token', $token, 1440, null, null, true, true);
+
+        return response()->json(compact('user', 'token'), 201)->withCookie($cookie);
     }
 
     // Login an existing user
