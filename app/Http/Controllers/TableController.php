@@ -30,7 +30,8 @@ class TableController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'owner_id' => 'required|integer',
         ]);
 
         $table = Table::create([
