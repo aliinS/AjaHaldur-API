@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('table_contents', function (Blueprint $table) {
+        Schema::create('table_content_joins', function (Blueprint $table) {
             $table->id();
             $table->foreignId('table_id')->constrained()->onDelete('cascade');
             $table->foreignId('table_content_id')->constrained()->onDelete('cascade');
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('group_user');
+        Schema::dropIfExists('table_content_joins');
     }
 };
