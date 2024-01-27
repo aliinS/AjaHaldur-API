@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\SystemController;
 use App\Http\Controllers\TableController;
 
 /*
@@ -40,12 +42,16 @@ Route::get('/test', function () {
 
 Route::post('/register', [AuthController::class, 'register']);
 
+// api endpoitn to get servers time
+
+Route::get('/data/system/time', [SystemController::class, 'time']);
 Route::middleware('api')->group(function (): void {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
-    
+
     Route::post('tables/personal', [TableController::class, 'index']);
 
+    Route::post('tables/groups', [GroupController::class, 'index']);
 });

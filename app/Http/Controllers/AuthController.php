@@ -38,9 +38,11 @@ class AuthController extends Controller
         // return response()->json(['user' => $user, 'message' => 'Registration successful'], 201);
         $token = Auth::guard('api')->login($user);
 
-        $cookie = Cookie::make('token', $token, 1440, null, null, true, true);
+        $token = $this->respondWithToken($token)->original;
 
-        return response()->json(compact('user', 'token'), 201)->withCookie($cookie);
+        // $cookie = Cookie::make('token', $token, 1440, null, null, true, true);
+
+        return response()->json(compact('user', 'token'), 201);
     }
 
     // Login an existing user
@@ -93,10 +95,14 @@ class AuthController extends Controller
     {
         $cookie = Cookie::make('token', $token, 1440, null, null, true, true);
 
+        // $ttl = auth()->factory()->getTTL(); // Get the TTL value
+        $ttl = 1; // Get the TTL value
+        $expiration = now()->addMinutes($ttl);
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL(),
+            'expires_in' => $expiration,
         ])->withCookie($cookie);
     }
 }

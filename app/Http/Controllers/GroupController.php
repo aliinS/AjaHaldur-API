@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Table;
+use App\Models\Group;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Log;
 
-class TableController extends Controller
+class GroupController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,12 +17,18 @@ class TableController extends Controller
     {
         $perPage = $request->get('amount', 4);
         $page = $request->get('page', 1);
-    
-        Paginator::currentPageResolver(function () use ($page) {
-            return $page;
-        });
-    
-        return response()->json(Table::where('owner_id', auth()->user()->id)->paginate($perPage));
+
+        $groups = User::with('groups')->find(auth()->user()->id)->groups()->paginate($perPage);
+
+        return response()->json($groups);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
     }
 
     /**
@@ -29,22 +36,13 @@ class TableController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        $table = Table::create([
-            'name' => $request->name,
-            'owner_id' => auth()->user()->id,
-        ]);
-
-        return response()->json($table);
+        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Table $table)
+    public function show(Group $group)
     {
         //
     }
@@ -52,7 +50,7 @@ class TableController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Table $table)
+    public function edit(Group $group)
     {
         //
     }
@@ -60,7 +58,7 @@ class TableController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Table $table)
+    public function update(Request $request, Group $group)
     {
         //
     }
@@ -68,7 +66,7 @@ class TableController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Table $table)
+    public function destroy(Group $group)
     {
         //
     }

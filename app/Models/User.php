@@ -63,4 +63,9 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function groups()
+    {
+        return $this->belongsToMany('App\Models\Group', 'group_user');
+    }
 }
