@@ -23,12 +23,16 @@ class TableController extends Controller
     {
         $perPage = $request->get('amount', 4);
         $page = $request->get('page', 1);
-    
+
         Paginator::currentPageResolver(function () use ($page) {
             return $page;
         });
-    
-        return response()->json(Table::where('owner_id', auth()->user()->id)->paginate($perPage));
+
+        $tables = Table::where('owner_id', auth()->user()->id)
+            ->orderBy('id', 'desc')
+            ->paginate($perPage);
+
+        return response()->json($tables);
     }
 
     /**
