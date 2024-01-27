@@ -6,9 +6,16 @@ use App\Models\Table;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\Paginator;
+use PhpParser\Node\Expr\Cast\String_;
 
 class TableController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['register', 'login']]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,23 +38,26 @@ class TableController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
             'owner_id' => 'required|integer',
         ]);
 
         $table = Table::create([
-            'name' => $request->name,
-            'owner_id' => auth()->user()->id,
+            'title' => $request->title,
+            'type' => $request->type,
+            'owner_id' => $request->owner_id,
         ]);
 
-        return response()->json($table);
+        return response()->json(['table' => $table, 'message' => 'Creation successful'], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Table $table)
+    public function show(String $id)
     {
-        //
+        $table = Table::find($id);
+        return response()->json(['table' => $table], 200);
     }
 
     /**

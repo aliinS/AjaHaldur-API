@@ -10,4 +10,9 @@ class Table extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function content()
+    {
+        return $this->hasMany(TableContent::class);
+    }
 }
