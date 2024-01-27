@@ -39,13 +39,12 @@ class TableController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|string|max:255',
-            'owner_id' => 'required|integer',
         ]);
 
         $table = Table::create([
             'title' => $request->title,
             'type' => $request->type,
-            'owner_id' => $request->owner_id,
+            'owner_id' => auth()->user()->id,
         ]);
 
         return response()->json(['table' => $table, 'message' => 'Creation successful'], 201);
