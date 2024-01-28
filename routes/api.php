@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\SystemController;
+use App\Http\Controllers\TableContentController;
 use App\Http\Controllers\TableController;
 
 /*
@@ -54,6 +55,12 @@ Route::middleware('api')->group(function (): void {
     Route::post('tables/personal', [TableController::class, 'index']);
     Route::post('/tables/store', [TableController::class, 'store']);
     Route::post('/tables/show/{id}', [TableController::class, 'show']);
+    Route::post('/tables/update/{id}', [TableController::class, 'update']);
+    Route::post('/tables/delete/{id}', [TableController::class, 'destroy']);
+
+    Route::post('/tables/content/store', [TableContentController::class, 'store']);
+    Route::post('/tables/content/update/{id}', [TableContentController::class, 'update']);
+    Route::post('/tables/content/delete/{id}', [TableContentController::class, 'destroy']);
 
     Route::post('tables/groups', [GroupController::class, 'index']);
 });

@@ -59,31 +59,36 @@ class TableController extends Controller
      */
     public function show(String $id)
     {
-        $table = Table::find($id);
+        $table = Table::with('content')->find($id);
+        if (!$table) {
+            return response()->json(['message' => 'Table not found'], 404);
+        }
         return response()->json(['table' => $table], 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Table $table)
-    {
-        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Table $table)
+    public function update(Request $request, String $id)
     {
-        //
+        $table = Table::find($id);
+        if (!$table) {
+            return response()->json(['message' => 'Table not found'], 404);
+        }
+        $table->update($request->all());
+        return response()->json(['table' => $table, 'message' => 'Update successful'], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Table $table)
+    public function destroy(String $id)
     {
-        //
+        $table = Table::find($id);
+        if (!$table) {
+            return response()->json(['message' => 'Table not found'], 404);
+        }
+        $table->delete();
+        return response()->json(['message' => 'Deletion successful'], 200);
     }
 }

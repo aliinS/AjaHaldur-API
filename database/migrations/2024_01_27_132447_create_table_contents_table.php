@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Table;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,8 +15,9 @@ return new class extends Migration
         Schema::create('table_contents', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->json('time');
+            $table->string('time');
             $table->string('location');
+            $table->foreignIdFor(Table::class);
             $table->timestamps();
         });
     }
