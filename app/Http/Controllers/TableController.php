@@ -69,6 +69,9 @@ class TableController extends Controller
         if (!$table) {
             return response()->json(['message' => 'Table not found'], 404);
         }
+        if ($table->owner_id != auth()->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
         return response()->json(['table' => $table], 200);
     }
 
