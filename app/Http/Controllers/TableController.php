@@ -45,9 +45,15 @@ class TableController extends Controller
             'type' => 'required|string|max:255',
         ]);
 
+        if ($request->type == 'personal' || $request->type == 'group') {
+            // do nothing
+        } else {
+            return response()->json(['message' => "Invalid type. Type must be 'personal' or 'group'."], 400);
+        }
+
         $table = Table::create([
             'title' => $request->title,
-            'type' => $request->type,
+            'type' => $request->type, 
             'owner_id' => auth()->user()->id,
         ]);
 

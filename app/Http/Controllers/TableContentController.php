@@ -72,7 +72,6 @@ class TableContentController extends Controller
             'date' => 'required|date',
             'time' => 'required|string',
             'location' => 'required|string|max:255',
-            'table_id' => 'required|integer',
         ]);
 
         $content = TableContent::find($id);

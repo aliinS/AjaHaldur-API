@@ -51,6 +51,10 @@ Route::middleware('api')->group(function (): void {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
+
+    Route::post('/user/update', [AuthController::class, 'update']);
+    // TODO: make it useable
+    // Route::post('/user/delete', [AuthController::class, 'delete']);
     
     Route::post('tables/personal', [TableController::class, 'index']);
     Route::post('/tables/store', [TableController::class, 'store']);
@@ -62,5 +66,7 @@ Route::middleware('api')->group(function (): void {
     Route::post('/tables/content/update/{id}', [TableContentController::class, 'update']);
     Route::post('/tables/content/delete/{id}', [TableContentController::class, 'destroy']);
 
-    Route::post('tables/groups', [GroupController::class, 'index']);
+    Route::post('groups', [GroupController::class, 'index']);
+    Route::post('/groups/show/{id}', [GroupController::class, 'show']);
+    Route::post('/groups/store', [GroupController::class, 'store']);
 });

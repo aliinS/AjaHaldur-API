@@ -15,4 +15,14 @@ class Group extends Model
     {
         return $this->belongsToMany('App\Models\User', 'group_user');
     }
+
+    // public function tables()
+    // {
+    //     return $this->hasMany('App\Models\Table');
+    // }
+
+    public function tables()
+    {
+        return $this->hasMany(Table::class, 'owner_id')->ofType('group');
+    }
 }

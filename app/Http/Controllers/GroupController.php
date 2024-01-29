@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Group;
+use App\Models\GroupUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
+use PhpParser\Node\Stmt\GroupUse;
 
 class GroupController extends Controller
 {
@@ -36,15 +38,33 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $group = Group::create([
+            'name' => $request->name,
+            'owner_id' => auth()->user()->id,
+        ]);
+
+        GroupUser::create([
+            'group_id' => $group->id,
+            'user_id' => auth()->user()->id,
+        ]);
+
+
+        return response()->json(['message' => 'Group created successfully'], 200);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Group $group)
+    public function show(String $id)
     {
-        //
+        // respond with the group and its users
+        $group = Group::with('users')->with('tables')->find($id);
+        return response()->json(['group' => $group], 200);
     }
 
     /**
@@ -58,9 +78,9 @@ class GroupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Group $group)
+    public function update(Request $request, String $id)
     {
-        //
+        
     }
 
     /**

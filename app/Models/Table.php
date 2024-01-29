@@ -15,4 +15,9 @@ class Table extends Model
     {
         return $this->hasMany(TableContent::class);
     }
+
+    public function scopeOfType($query, $type)
+    {
+        return $query->where('type', $type);
+    }
 }
