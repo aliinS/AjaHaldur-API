@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Faker\Generator as Faker;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -68,7 +69,7 @@ class AuthController extends Controller
             // Log::info(Group::where('id', $groupTables->group_id));
         }
 
-        Log::info($groups);
+        // Log::info($groups);
 
         // $user->delete();
 
@@ -105,7 +106,7 @@ class AuthController extends Controller
     // Login an existing user
     public function login(Request $request)
     {
-        Log::info($request);
+        // Log::info($request);
         $credentials = $request->only('email', 'password');
 
         // $credentials->validate([
@@ -152,12 +153,17 @@ class AuthController extends Controller
     {
         $cookie = Cookie::make('token', $token, 1440, null, null, true, true);
 
-        // $ttl = auth()->factory()->getTTL(); // Get the TTL value
-        $ttl = 1; // Get the TTL value
+        $ttl = auth()->factory()->getTTL(); // Get the TTL value
         $expiration = now()->addMinutes($ttl);
+
+        // Generate a refresh token
+        // $refreshToken = JWTAuth::refresh($token, true);
+
+        // Log::info($ttl);
 
         return response()->json([
             'access_token' => $token,
+            // 'refresh_token' => $refreshToken, // Include the refresh token in the response
             'token_type' => 'bearer',
             'expires_in' => $expiration,
         ])->withCookie($cookie);

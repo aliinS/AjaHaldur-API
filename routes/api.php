@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\RefreshToken;
 use App\Http\Controllers\SystemController;
 use App\Http\Controllers\TableContentController;
 use App\Http\Controllers\TableController;
@@ -44,18 +45,22 @@ Route::get('/test', function () {
 Route::post('/register', [AuthController::class, 'register']);
 
 // api endpoitn to get servers time
+Route::group([
+    'middleware' => ['api', 'jwt.refresh'],
+], function ($router) {
+    $router->post('refresh', [RefreshToken::class, 'refresh']);
+});
 
 Route::get('/data/system/time', [SystemController::class, 'time']);
 Route::middleware('api')->group(function (): void {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
 
     Route::post('/user/update', [AuthController::class, 'update']);
     // TODO: make it useable
     // Route::post('/user/delete', [AuthController::class, 'delete']);
-    
+
     Route::post('tables/personal', [TableController::class, 'index']);
     Route::post('/tables/store', [TableController::class, 'store']);
     Route::post('/tables/show/{id}', [TableController::class, 'show']);
