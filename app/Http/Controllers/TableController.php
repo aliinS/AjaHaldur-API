@@ -29,7 +29,7 @@ class TableController extends Controller
         });
 
         $tables = Table::where('owner_id', auth()->user()->id)
-            ->orderBy('id', 'desc')
+            ->orderBy('upDated_at', 'desc')
             ->paginate($perPage);
 
         return response()->json($tables);
