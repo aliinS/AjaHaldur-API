@@ -86,8 +86,10 @@ class GroupController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Group $group)
+    public function destroy(String $id)
     {
-        //
+        $group = Group::find($id);
+        $group->delete();
+        return response()->json(['message' => 'Group deleted successfully'], 200);
     }
 }
