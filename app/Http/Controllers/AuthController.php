@@ -153,7 +153,8 @@ class AuthController extends Controller
     {
         $cookie = Cookie::make('token', $token, 1440, null, null, true, true);
 
-        $ttl = auth()->factory()->getTTL(); // Get the TTL value
+        // $ttl = auth()->factory()->getTTL(); // Get the TTL value
+        $ttl = 120; // Get the TTL value
         $expiration = now()->addMinutes($ttl);
 
         // Generate a refresh token

@@ -64,6 +64,7 @@ Route::middleware('api')->group(function (): void {
     Route::post('tables/personal', [TableController::class, 'index']);
     Route::post('/tables/store', [TableController::class, 'store']);
     Route::post('/tables/show/{id}', [TableController::class, 'show']);
+    Route::post('/tables/hours/{id}', [TableController::class, 'hours']);
     Route::post('/tables/update/{id}', [TableController::class, 'update']);
     Route::post('/tables/delete/{id}', [TableController::class, 'destroy']);
 

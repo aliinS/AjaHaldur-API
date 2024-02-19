@@ -63,6 +63,21 @@ class TableController extends Controller
     /**
      * Display the specified resource.
      */
+    public function hours(String $id)
+    {
+        $table = Table::with('content')->find($id);
+        $hours = 0;
+        
+        foreach ($table->content as $content) {
+            $hours += $content->time;
+        }
+        
+        return response()->json(['hours' => $hours], 200);
+    }
+
+    /**
+     * Display the specified resource.
+     */
     public function show(String $id)
     {
         $table = Table::with('content')->find($id);
