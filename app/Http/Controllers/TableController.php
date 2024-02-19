@@ -6,6 +6,7 @@ use App\Models\Table;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Expr\Cast\String_;
 
 class TableController extends Controller
@@ -68,11 +69,14 @@ class TableController extends Controller
         $table = Table::with('content')->find($id);
         $hours = 0;
         
-        foreach ($table->content as $content) {
-            $hours += $content->time;
+        if (Auth()->user()->id == $table->owner_id) {
+            foreach ($table->content as $content) {
+                $hours += $content->hours;
+            }
+            return response()->json(['hours' => $hours], 200);
+        } else {
+            return response()->json(['message' => 'Table not found'], 401);
         }
-        
-        return response()->json(['hours' => $hours], 200);
     }
 
     /**
@@ -82,10 +86,12 @@ class TableController extends Controller
     {
         $table = Table::with('content')->find($id);
         if (!$table) {
-            return response()->json(['message' => 'Table not found'], 404);
+            if ($table->owner_id != auth()->user()->id) {
+                return response()->json(['message' => 'Table not found'], 401);
+            }
         }
         if ($table->owner_id != auth()->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Table not found'], 401);
         }
         return response()->json(['table' => $table], 200);
     }
