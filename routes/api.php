@@ -75,4 +75,5 @@ Route::middleware('api')->group(function (): void {
     Route::post('groups', [GroupController::class, 'index']);
     Route::post('/groups/show/{id}', [GroupController::class, 'show']);
     Route::post('/groups/store', [GroupController::class, 'store']);
+    Route::post('/groups/delete/{id}', [GroupController::class, 'destroy']);
 });
