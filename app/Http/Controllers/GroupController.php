@@ -64,11 +64,7 @@ class GroupController extends Controller
     {
         // respond with the group and its users
         $group = Group::with('users')->with('tables')->find($id);
-        if (Auth()->user()->id == $group->owner_id) {
-            return response()->json($group);
-        } else {
-            return response()->json(['message' => 'Group not found'], 404);
-        }
+        return response()->json(['group' => $group], 200);
     }
 
     /**
@@ -93,11 +89,7 @@ class GroupController extends Controller
     public function destroy(String $id)
     {
         $group = Group::find($id);
-        if ($group->owner_id == auth()->user()->id) {
-            $group->delete();
-            return response()->json(['message' => 'Group deleted successfully'], 200);
-        } else {
-            return response()->json(['message' => 'Group not found'], 401);
-        }
+        $group->delete();
+        return response()->json(['message' => 'Group deleted successfully'], 200);
     }
 }
