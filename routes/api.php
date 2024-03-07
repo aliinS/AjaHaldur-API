@@ -61,19 +61,19 @@ Route::middleware('api')->group(function (): void {
     // TODO: make it useable
     // Route::post('/user/delete', [AuthController::class, 'delete']);
 
-    Route::post('tables/personal', [TableController::class, 'index']);
+    Route::get('tables/personal', [TableController::class, 'index']);
     Route::post('/tables/store', [TableController::class, 'store']);
-    Route::post('/tables/show/{id}', [TableController::class, 'show']);
-    Route::post('/tables/hours/{id}', [TableController::class, 'hours']);
+    Route::get('/tables/show/{id}', [TableController::class, 'show']);
+    Route::get('/tables/hours/{id}', [TableController::class, 'hours']);
     Route::post('/tables/update/{id}', [TableController::class, 'update']);
-    Route::post('/tables/delete/{id}', [TableController::class, 'destroy']);
-
+    Route::delete('/tables/delete/{tableContent}', [TableController::class, 'destroy']);
+    
     Route::post('/tables/content/store', [TableContentController::class, 'store']);
     Route::post('/tables/content/update/{id}', [TableContentController::class, 'update']);
-    Route::post('/tables/content/delete/{id}', [TableContentController::class, 'destroy']);
-
-    Route::post('groups', [GroupController::class, 'index']);
-    Route::post('/groups/show/{id}', [GroupController::class, 'show']);
+    Route::delete('/tables/content/delete/{id}', [TableContentController::class, 'destroy']);
+    
+    Route::get('groups', [GroupController::class, 'index']);
+    Route::get('/groups/show/{id}', [GroupController::class, 'show']);
     Route::post('/groups/store', [GroupController::class, 'store']);
     Route::post('/groups/delete/{id}', [GroupController::class, 'destroy']);
 });

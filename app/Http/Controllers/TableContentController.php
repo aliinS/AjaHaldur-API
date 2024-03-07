@@ -65,33 +65,24 @@ class TableContentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, String $id)
+    public function update(Request $request, TableContent $tableContent)
     {
         // Validate the request
-        $request->validate([
+        $tableContent->validate([
             'date' => 'required|date',
             'time' => 'required|string',
             'location' => 'required|string|max:255',
         ]);
-
-        $content = TableContent::find($id);
-        if (!$content) {
-            return response()->json(['message' => 'Content not found'], 404);
-        }
-        $content->update($request->all());
-        return response()->json(['content' => $content, 'message' => 'Content updated successfully'], 200);
+        $tableContent->update($request->all());
+        return response()->json(['content' => $tableContent, 'message' => 'Content updated successfully'], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(String $id)
+    public function destroy(TableContent $tableContent)
     {
-        $content = TableContent::find($id);
-        if (!$content) {
-            return response()->json(['message' => 'Content not found'], 404);
-        }
-        $content->delete();
+        $tableContent->delete();
         return response()->json(['message' => 'Content deleted successfully'], 200);
     }
 }
