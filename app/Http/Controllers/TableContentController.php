@@ -32,7 +32,7 @@ class TableContentController extends Controller
         $request->validate([
             'date' => 'required|date',
             'time' => 'required|string',
-            'location' => 'required|string|max:255',
+            'location' => 'string|max:255',
             'table_id' => 'required|integer',
         ]);
 
