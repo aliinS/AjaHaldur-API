@@ -25,6 +25,35 @@ class GroupController extends Controller
         return response()->json($groups);
     }
 
+    public function invite(Request $request) {
+        $request->validate([
+            'email' => 'required|email',
+            'group_id' => 'required|integer',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $group = Group::find($request->group_id);
+        if (!$group) {
+            return response()->json(['message' => 'Group not found'], 404);
+        }
+
+        $groupUser = GroupUser::where('group_id', $group->id)->where('user_id', $user->id)->first();
+        if ($groupUser) {
+            return response()->json(['message' => 'User already in group'], 400);
+        }
+
+        GroupUser::create([
+            'group_id' => $group->id,
+            'user_id' => $user->id,
+        ]);
+
+        return response()->json(['message' => 'User added to group'], 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -78,9 +107,14 @@ class GroupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, String $id)
+    public function update(Request $request, Group $group)
     {
-        
+        $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $group->update($request->all());
+        return response()->json(['message' => 'Group updated successfully'], 200);
     }
 
     /**

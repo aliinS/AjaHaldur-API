@@ -74,6 +74,11 @@ Route::middleware('api')->group(function (): void {
     
     Route::get('groups', [GroupController::class, 'index']);
     Route::get('/groups/show/{id}', [GroupController::class, 'show']);
+    // GROUP UPDATE
+    Route::post('/groups/update/{group}', [GroupController::class, 'update']);
+    // GROUP MEMEBERS INVITE
+    Route::post('/groups/invite/{id}', [GroupController::class, 'invite']);
+    // 
     Route::post('/groups/store', [GroupController::class, 'store']);
     Route::post('/groups/delete/{id}', [GroupController::class, 'destroy']);
 });
