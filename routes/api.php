@@ -55,7 +55,7 @@ Route::get('/data/system/time', [SystemController::class, 'time']);
 Route::middleware('api')->group(function (): void {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('me', [AuthController::class, 'me']);
+    Route::get('me', [AuthController::class, 'me']);
 
     Route::post('/user/update', [AuthController::class, 'update']);
     // TODO: make it useable

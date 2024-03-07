@@ -80,6 +80,7 @@ class TableController extends Controller
      */
     public function show(String $id)
     {
+        $hours = 0;
         $table = Table::with('content')->find($id);
         if (!$table) {
             return response()->json(['message' => 'Table not found'], 404);
@@ -87,7 +88,10 @@ class TableController extends Controller
         if ($table->owner_id != auth()->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-        return response()->json(['table' => $table], 200);
+        foreach ($table->content as $content) {
+            $hours += $content->time;
+        }
+        return response()->json(['table' => $table, "hours" => $hours], 200);
     }
 
     /**
