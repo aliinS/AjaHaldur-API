@@ -51,7 +51,38 @@ class GroupController extends Controller
             'user_id' => $user->id,
         ]);
 
+        // create a new private table for thi suser
+        $table = $group->tables()->create([
+            'title' => $user->name,
+            'type' => 'group',
+            'owner_id' => $group->id,
+            'group_member_id' => $user->id,
+        ]);
+
         return response()->json(['message' => 'User added to group'], 200);
+    }
+
+    public function deleteMember(Request $request, String $id) {
+        $request->validate([
+            'user_id' => 'required|integer',
+        ]);
+
+        Log::info($request->user_id);
+        Log::info($id);
+
+        $groupUser = GroupUser::where('group_id', $id)->where('user_id', $request->user_id)->first();
+        Log::info($groupUser);
+        if (!$groupUser) {
+            return response()->json(['message' => 'User not in group'], 404);
+        }
+
+        $groupOwner = Group::find($id)->owner_id;
+        if ($groupOwner == $request->user_id) {
+            return response()->json(['message' => 'Owner cannot be removed from group'], 400);
+        }
+
+        $groupUser->delete();
+        return response()->json(['message' => 'User removed from group'], 200);
     }
 
     /**
@@ -91,6 +122,9 @@ class GroupController extends Controller
      */
     public function show(String $id)
     {
+        
+
+        
         // respond with the group and its users
         $group = Group::with('users')->with('tables')->find($id);
         return response()->json(['group' => $group], 200);
@@ -123,6 +157,13 @@ class GroupController extends Controller
     public function destroy(String $id)
     {
         $group = Group::find($id);
+        if (!$group) {
+            return response()->json(['message' => 'Group not found'], 404);
+        }
+        $mebers = GroupUser::where('group_id', $id)->get();
+        foreach ($mebers as $member) {
+            $member->delete();
+        }
         $group->delete();
         return response()->json(['message' => 'Group deleted successfully'], 200);
     }
