@@ -53,7 +53,7 @@ class GroupController extends Controller
             'user_id' => $user->id,
         ]);
 
-        Log::info('Invited user data: ' . $group);
+        Log::info('Invited user data: ' . $user);
 
         // create a new private table for thi suser
         $table = $group->tables()->create([
