@@ -28,7 +28,7 @@ class TableController extends Controller
             return $page;
         });
 
-        $tables = Table::where('owner_id', auth()->user()->id)
+        $tables = Table::where('owner_id', auth()->user()->id)->where('type', 'personal')
             ->orderBy('upDated_at', 'desc')
             ->paginate($perPage);
 
