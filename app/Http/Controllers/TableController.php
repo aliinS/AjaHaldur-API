@@ -48,7 +48,7 @@ class TableController extends Controller
         if ($request->type == 'personal' || $request->type == 'group') {
             // do nothing
         } else {
-            return response()->json(['message' => "Invalid type. Type must be 'personal' or 'group'."], 400);
+            return response()->json(['message' => "Süsteemi viga: TAB-001"], 400);
         }
 
         $table = Table::create([
@@ -57,7 +57,7 @@ class TableController extends Controller
             'owner_id' => auth()->user()->id,
         ]);
 
-        return response()->json(['table' => $table, 'message' => 'Creation successful'], 201);
+        return response()->json(['table' => $table, 'message' => 'Tabel edukalt loodud'], 201);
     }
 
     /**
@@ -83,15 +83,15 @@ class TableController extends Controller
         $hours = 0;
         $table = Table::with('content')->find($id);
         if (!$table) {
-            return response()->json(['message' => 'Table not found'], 404);
+            return response()->json(['message' => 'Tabel pole olemas'], 404);
         }
         if ($table->owner_id != auth()->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Volitamata'], 401);
         }
         foreach ($table->content as $content) {
             $hours += $content->time;
         }
-        return response()->json(['table' => $table, "hours" => $hours], 200);
+        return response()->json(['table' => $table, "hours" => $hours, "message" => 'Tabel edukalt laetud'], 200);
     }
 
     /**

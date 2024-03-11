@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TableContent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TableContentController extends Controller
 {
@@ -32,7 +33,7 @@ class TableContentController extends Controller
         $request->validate([
             'date' => 'required|date',
             'time' => 'required|string',
-            'location' => 'string|max:255',
+            'location' => 'max:255',
             'table_id' => 'required|integer',
         ]);
 
@@ -43,7 +44,7 @@ class TableContentController extends Controller
             'table_id' => $request->table_id,
         ]);
         // Retrun a response with a JSON object
-        return response()->json(['content' => $content, 'message' => 'Creation successful'], 201);
+        return response()->json(['content' => $content, 'message' => 'Sissekanne edulakt loodud'], 201);
     }
 
     /**
@@ -65,24 +66,37 @@ class TableContentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, TableContent $tableContent)
+    public function update(Request $request, String $id)
     {
+        $tableContent = TableContent::find($id);
+        if (!$tableContent) {
+            return response()->json(['message' => 'Sissekannet pole olemas'], 404);
+        }
+        
         // Validate the request
-        $tableContent->validate([
+        $request->validate([
             'date' => 'required|date',
             'time' => 'required|string',
-            'location' => 'required|string|max:255',
+            'location' => 'max:255',
         ]);
+
         $tableContent->update($request->all());
-        return response()->json(['content' => $tableContent, 'message' => 'Content updated successfully'], 200);
+        return response()->json(['content' => $tableContent, 'message' => 'Sissekanne uuendatud edukalt'], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TableContent $tableContent)
+    public function destroy(String $id)
     {
+        $tableContent = TableContent::find($id);
+        if (!$tableContent) {
+            return response()->json(['message' => 'Sissekannet pole olemas'], 404);
+        }
+
+        
+        Log::info($tableContent);
         $tableContent->delete();
-        return response()->json(['message' => 'Content deleted successfully'], 200);
+        return response()->json(['message' => 'Sissekanne edukalt kustutatud'], 200);
     }
 }
