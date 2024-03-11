@@ -51,6 +51,8 @@ class GroupController extends Controller
             'user_id' => $user->id,
         ]);
 
+        Log::info('Invited user data: ' . $group->id);
+
         // create a new private table for thi suser
         $table = $group->tables()->create([
             'title' => $user->name,
@@ -122,12 +124,31 @@ class GroupController extends Controller
      */
     public function show(String $id)
     {
-        
+        if (!Group::find($id)) {
+            return response()->json(['message' => 'Group not found'], 404);
+        }
+        $group = Group::with('users')->with('tables')->find($id);
 
+        Log::info(auth()->user()['id']);
+
+        if (auth()->user()['id']  == $group->owner_id) {
+            $group['isOwner'] = true;
+            return response()->json(['group' => $group], 200);
+        } else {
+            $group['isOwner'] = false;
+            $data = [];
+            // add group data to the $data
+            $data = $group;
+            // add users's table to data
+            $data['tables'] = $group->tables()->where('group_member_id', auth()->user()['id'])->get();
+            // add users's data to the $data
+            $data['users'] = $group->users()->where('user_id', auth()->user()['id'])->get();
+            return response()->json(['group' => $group], 200);
+        }
+        
         
         // respond with the group and its users
-        $group = Group::with('users')->with('tables')->find($id);
-        return response()->json(['group' => $group], 200);
+        // return response()->json(['group' => $group], 200);
     }
 
     /**
