@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Group;
 use App\Models\GroupUser;
+use App\Models\Table;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -56,12 +57,24 @@ class GroupController extends Controller
         Log::info('Invited user data: ' . $user);
 
         // create a new private table for thi suser
-        $table = $group->tables()->create([
+        // $table = $group->tables()->create([
+        //     'title' => $user->name,
+        //     'type' => 'group',
+        //     'owner_id' => $group->id,
+        //     'group_member_id' => $user->id,
+        // ]);
+
+        $table = Table::create([
             'title' => $user->name,
             'type' => 'group',
             'owner_id' => $group->id,
             'group_member_id' => $user->id,
         ]);
+
+        Log::info('Created table for user: ' . $table);
+
+
+
 
         return response()->json(['message' => 'User added to group'], 200);
     }
