@@ -36,6 +36,8 @@ class GroupController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
+        Log::info('Fetched user data by email: ' . $user);
+
         $group = Group::find($request->group_id);
         if (!$group) {
             return response()->json(['message' => 'Group not found'], 404);
@@ -51,7 +53,7 @@ class GroupController extends Controller
             'user_id' => $user->id,
         ]);
 
-        Log::info('Invited user data: ' . $group->id);
+        Log::info('Invited user data: ' . $group);
 
         // create a new private table for thi suser
         $table = $group->tables()->create([
