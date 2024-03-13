@@ -21,12 +21,17 @@ class GroupController extends Controller
         $perPage = $request->get('amount', 4);
         $page = $request->get('page', 1);
 
-        $groups = User::with('groups')->find(auth()->user()->id)->groups()->paginate($perPage);
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
+
+        $groups = User::with('groups')->find(auth()->user()->id)->groups()->orderBy('updated_at', 'desc')->paginate($perPage);
 
         return response()->json($groups);
     }
 
-    public function invite(Request $request) {
+    public function invite(Request $request)
+    {
         $request->validate([
             'email' => 'required|email',
             'group_id' => 'required|integer',
@@ -67,7 +72,8 @@ class GroupController extends Controller
         return response()->json(['message' => 'User added to group'], 200);
     }
 
-    public function deleteMember(Request $request, String $id) {
+    public function deleteMember(Request $request, String $id)
+    {
         $request->validate([
             'user_id' => 'required|integer',
         ]);
@@ -148,8 +154,8 @@ class GroupController extends Controller
             $data['users'] = $group->users()->where('user_id', auth()->user()['id'])->get();
             return response()->json(['group' => $group], 200);
         }
-        
-        
+
+
         // respond with the group and its users
         // return response()->json(['group' => $group], 200);
     }
