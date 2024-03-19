@@ -124,6 +124,13 @@ class GroupController extends Controller
             'user_id' => auth()->user()->id,
         ]);
 
+        $table = Table::create([
+            'title' => auth()->user()->name,
+            'type' => 'group',
+            'owner_id' => $group->id,
+            'group_member_id' => auth()->user()->id,
+        ]);
+
 
         return response()->json(['message' => 'Group created successfully'], 200);
     }
@@ -140,6 +147,8 @@ class GroupController extends Controller
 
         Log::info(auth()->user()['id']);
 
+        $group['membersList'] = $group->users()->get();
+
         if (auth()->user()['id']  == $group->owner_id) {
             $group['isOwner'] = true;
             return response()->json(['group' => $group], 200);
@@ -147,12 +156,18 @@ class GroupController extends Controller
             $group['isOwner'] = false;
             $data = [];
             // add group data to the $data
-            $data = $group;
+            // $data = $group;
+
+            $data['name'] = $group['name'];
+            $data['description'] = $group['description'];
+            $data['isOwner'] = $group['isOwner'];
+            $data['membersList'] = $group['membersList'];
             // add users's table to data
             $data['tables'] = $group->tables()->where('group_member_id', auth()->user()['id'])->get();
+            // Log::info('tables');
             // add users's data to the $data
             $data['users'] = $group->users()->where('user_id', auth()->user()['id'])->get();
-            return response()->json(['group' => $group], 200);
+            return response()->json(['group' => $data], 200);
         }
 
 
