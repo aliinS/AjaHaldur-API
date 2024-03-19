@@ -93,7 +93,7 @@ class GroupController extends Controller
         }
 
         // get deleted users group table and archive it
-        $table = Table::where('owner_id', $id)->where('group_member_id', $request->user_id)->where('archived', false)->first();
+        $table = Table::where('owner_id', $id)->where('group_member_id', $request->user_id)->where('archived', 0)->first();
         if ($table) {
             $table->update(['archived' => true]);
         }
