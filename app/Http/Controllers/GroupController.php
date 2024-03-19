@@ -169,7 +169,7 @@ class GroupController extends Controller
             $data['isOwner'] = $group['isOwner'];
             $data['membersList'] = $group['membersList'];
             // add users's table to data
-            $data['tables'] = $group->tables()->where('group_member_id', auth()->user()['id'])->get();
+            $data['tables'] = $group->tables()->where('group_member_id', auth()->user()['id'])->where('archived', 0)->get();
             // Log::info('tables');
             // add users's data to the $data
             $data['users'] = $group->users()->where('user_id', auth()->user()['id'])->get();
