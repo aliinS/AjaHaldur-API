@@ -92,6 +92,12 @@ class GroupController extends Controller
             return response()->json(['message' => 'Owner cannot be removed from group'], 400);
         }
 
+        // get deleted users group table and archive it
+        $table = Table::where('owner_id', $id)->where('group_member_id', $request->user_id)->where('archived', false)->first();
+        if ($table) {
+            $table->update(['archived' => true]);
+        }
+
         $groupUser->delete();
         return response()->json(['message' => 'User removed from group'], 200);
     }
