@@ -146,6 +146,13 @@ class GroupController extends Controller
      */
     public function show(String $id)
     {
+        // check if user is in the group
+        $groupUser = GroupUser::where('group_id', $id)->where('user_id', auth()->user()['id'])->first();
+        if (!$groupUser) {
+            return response()->json(['message' => 'User not in group'], 404);
+        }
+
+
         if (!Group::find($id)) {
             return response()->json(['message' => 'Group not found'], 404);
         }
