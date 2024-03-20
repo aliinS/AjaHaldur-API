@@ -53,7 +53,7 @@ class TableController extends Controller
 
         $table = Table::create([
             'title' => $request->title,
-            'type' => $request->type, 
+            'type' => $request->type,
             'owner_id' => auth()->user()->id,
         ]);
 
@@ -67,11 +67,11 @@ class TableController extends Controller
     {
         $table = Table::with('content')->find($id);
         $hours = 0;
-        
+
         foreach ($table->content as $content) {
             $hours += $content->time;
         }
-        
+
         return response()->json(['hours' => $hours], 200);
     }
 
@@ -81,16 +81,23 @@ class TableController extends Controller
     public function show(String $id)
     {
         $hours = 0;
-        $table = Table::with('content')->find($id);
+        // $table = Table::with('content')->find($id);
+        // get table with content that is sorted by id
+        $table = Table::with(['content' => function ($query) {
+            $query->orderBy('id', 'desc');
+        }])->find($id);
+        
         if (!$table) {
             return response()->json(['message' => 'Tabel pole olemas'], 404);
         }
         if ($table->owner_id != auth()->user()->id) {
             return response()->json(['message' => 'Volitamata'], 401);
         }
+        // $table->content = $table->content->sortByDesc('id');
         foreach ($table->content as $content) {
             $hours += $content->time;
         }
+        Log::info($table->content);
         return response()->json(['table' => $table, "hours" => $hours, "message" => 'Tabel edukalt laetud'], 200);
     }
 
