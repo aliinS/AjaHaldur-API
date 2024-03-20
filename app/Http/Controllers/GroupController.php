@@ -26,6 +26,14 @@ class GroupController extends Controller
         });
 
         $groups = User::with('groups')->find(auth()->user()->id)->groups()->orderBy('updated_at', 'desc')->paginate($perPage);
+        foreach ($groups as $group) {
+            if ($group->owner_id == auth()->user()->id) {
+                $group['isOwner'] = true;
+            } else {
+                $group['isOwner'] = false;
+            }
+        }
+
 
         return response()->json($groups);
     }
