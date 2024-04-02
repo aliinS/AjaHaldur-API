@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Group;
 use App\Models\GroupUser;
 use App\Models\Table;
+use App\Models\TableContent;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -36,6 +37,18 @@ class GroupController extends Controller
 
 
         return response()->json($groups);
+    }
+    
+    public function getTable($id)
+    {
+        $table = Table::where('group_member_id', $id)->first();
+
+        // get table content from the table
+        $tableContent = TableContent::where('table_id', $table->id)->get();
+
+
+
+        return response()->json(['table' => $table, 'tableContent' => $tableContent], 200);
     }
 
     public function invite(Request $request)
