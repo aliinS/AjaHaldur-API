@@ -41,7 +41,10 @@ class GroupController extends Controller
     
     public function getTable($id)
     {
-        $table = Table::where('group_member_id', $id)->first();
+
+        $group_id = $_GET['group_id'];
+
+        $table = Table::where('group_member_id', $id)->where('owner_id', $group_id)->first();
 
         // get table content from the table
         $tableContent = TableContent::where('table_id', $table->id)->get();
@@ -192,6 +195,7 @@ class GroupController extends Controller
             // add group data to the $data
             // $data = $group;
 
+            $data['id'] = $group['id'];
             $data['name'] = $group['name'];
             $data['description'] = $group['description'];
             $data['isOwner'] = $group['isOwner'];
