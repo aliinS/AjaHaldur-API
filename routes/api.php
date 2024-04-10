@@ -71,6 +71,8 @@ Route::middleware('api')->group(function (): void {
     Route::post('/tables/content/store', [TableContentController::class, 'store']);
     Route::post('/tables/content/update/{id}', [TableContentController::class, 'update']);
     Route::delete('/tables/content/delete/{id}', [TableContentController::class, 'destroy']);
+    // table content filter endpoint
+    Route::get('/tables/content/filter/{id}', [TableContentController::class, 'filter']);
     
     Route::get('groups', [GroupController::class, 'index']);
     Route::get('/groups/show/{id}', [GroupController::class, 'show']);

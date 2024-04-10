@@ -46,6 +46,10 @@ class GroupController extends Controller
 
         $table = Table::where('group_member_id', $id)->where('owner_id', $group_id)->first();
 
+        if (!$table) {
+            return response()->json(['message' => 'Table not found'], 404);
+        }
+
         // get table content from the table
         $tableContent = TableContent::where('table_id', $table->id)->get();
 

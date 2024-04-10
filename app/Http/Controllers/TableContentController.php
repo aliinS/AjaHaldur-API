@@ -8,6 +8,28 @@ use Illuminate\Support\Facades\Log;
 
 class TableContentController extends Controller
 {
+
+    // filter function with from and to times
+    public function filter(Request $request, $id)
+    {
+        $from = $_GET['from'];
+        $to = $_GET['to'];
+        $table_id = $id;
+        $tableContents = TableContent::where('table_id', $table_id)
+            ->where('date', '>=', $from)
+            ->where('date', '<=', $to)
+            ->orderBy('date', 'DESC')
+            ->get();
+
+        // set hours from adding content's time
+        $hours = 0;
+        foreach ($tableContents as $content) {
+            $hours += $content->time;
+        };
+
+        return response()->json(['content' => $tableContents, 'hours' => $hours], 200);
+    }
+
     /**
      * Display a listing of the resource.
      */
