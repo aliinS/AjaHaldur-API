@@ -97,8 +97,9 @@ class TableController extends Controller
         foreach ($table->content as $content) {
             $hours += $content->time;
         }
+        $table->hours = $hours;
         Log::info($table->content);
-        return response()->json(['table' => $table, "hours" => $hours, "message" => 'Tabel edukalt laetud'], 200);
+        return response()->json(['table' => $table, "message" => 'Tabel edukalt laetud'], 200);
     }
 
     /**
