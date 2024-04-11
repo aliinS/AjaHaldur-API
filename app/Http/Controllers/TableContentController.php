@@ -14,8 +14,7 @@ class TableContentController extends Controller
     {
         $from = $_GET['from'];
         $to = $_GET['to'];
-        $table_id = $id;
-        $tableContents = TableContent::where('table_id', $table_id)
+        $tableContents = TableContent::where('table_id', $id)
             ->where('date', '>=', $from)
             ->where('date', '<=', $to)
             ->orderBy('date', 'DESC')
@@ -27,7 +26,9 @@ class TableContentController extends Controller
             $hours += $content->time;
         };
 
-        return response()->json(['content' => $tableContents, 'hours' => $hours], 200);
+        Log::info($id);
+
+        return response()->json(['content' => $tableContents, 'hours' => $hours, 'message' => "Andmed filtreeritud"], 200);
     }
 
     /**
@@ -94,7 +95,7 @@ class TableContentController extends Controller
         if (!$tableContent) {
             return response()->json(['message' => 'Sissekannet pole olemas'], 404);
         }
-        
+
         // Validate the request
         $request->validate([
             'date' => 'required|date',
@@ -116,7 +117,7 @@ class TableContentController extends Controller
             return response()->json(['message' => 'Sissekannet pole olemas'], 404);
         }
 
-        
+
         Log::info($tableContent);
         $tableContent->delete();
         return response()->json(['message' => 'Sissekanne edukalt kustutatud'], 200);
