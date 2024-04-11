@@ -107,12 +107,9 @@ class TableController extends Controller
      */
     public function update(Request $request, String $id)
     {
-        $table = Table::find($id);
-        if (!$table) {
-            return response()->json(['message' => 'Table not found'], 404);
-        }
-        $table->update($request->all());
-        return response()->json(['table' => $table, 'message' => 'Update successful'], 200);
+        // $table = Table::find($id);
+        // return response()->json(['table' => $table, 'message' => 'Update successful'], 200);
+        Log::info("response");
     }
 
     /**
