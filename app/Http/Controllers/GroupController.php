@@ -38,7 +38,7 @@ class GroupController extends Controller
 
         return response()->json($groups);
     }
-    
+
     public function getTable($id)
     {
 
@@ -51,11 +51,17 @@ class GroupController extends Controller
         }
 
         // get table content from the table
-        $tableContent = TableContent::where('table_id', $table->id)->get();
+        $tableContent = TableContent::where('table_id', $table->id)->orderBy('id', 'DESC')->get();
+
+        // add hours to the table content
+        $hours = 0;
+        foreach ($tableContent as $content) {
+            $hours += $content->time;
+        }
 
 
 
-        return response()->json(['table' => $table, 'tableContent' => $tableContent], 200);
+        return response()->json(['table' => $table, 'tableContent' => $tableContent, 'hours' => $hours], 200);
     }
 
     public function invite(Request $request)
@@ -180,7 +186,6 @@ class GroupController extends Controller
             return response()->json(['message' => 'User not in group'], 404);
         }
 
-
         if (!Group::find($id)) {
             return response()->json(['message' => 'Group not found'], 404);
         }
@@ -205,13 +210,15 @@ class GroupController extends Controller
             $data['isOwner'] = $group['isOwner'];
             $data['membersList'] = $group['membersList'];
             // add users's table to data
-            $data['tables'] = $group->tables()->where('group_member_id', auth()->user()['id'])->where('archived', 0)->get();
+            $data['tables'] = $group->tables()
+                ->where('group_member_id', auth()->user()['id'])
+                ->where('archived', 0)
+                ->get();
             // Log::info('tables');
             // add users's data to the $data
             $data['users'] = $group->users()->where('user_id', auth()->user()['id'])->get();
             return response()->json(['group' => $data], 200);
         }
-
 
         // respond with the group and its users
         // return response()->json(['group' => $group], 200);
