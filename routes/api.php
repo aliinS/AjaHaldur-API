@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\RefreshToken;
+use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\SystemController;
 use App\Http\Controllers\TableContentController;
 use App\Http\Controllers\TableController;
@@ -83,4 +84,12 @@ Route::middleware('api')->group(function (): void {
     Route::post('/groups/members/delete/{id}', [GroupController::class, 'deleteMember']);
     Route::post('/groups/store', [GroupController::class, 'store']);
     Route::post('/groups/delete/{id}', [GroupController::class, 'destroy']);
+
+    Route::get('groups/shifts', [ShiftController::class, 'index']);
+    Route::post('/groups/shifts/store', [ShiftController::class, 'store']);
+    Route::post('/groups/shifts/{shift}/jobs', [ShiftController::class, 'storeJob']);
+    Route::post('/groups/shifts/{shift}/staff', [ShiftController::class, 'storeStaff']);
+    Route::get('/groups/shifts/{shift}/show', [ShiftController::class, 'show']);
+    Route::post('/groups/shifts/{shift}/update', [ShiftController::class, 'update']);
+    Route::post('/groups/shifts/{shift}/delete', [ShiftController::class, 'destroy']);
 });
