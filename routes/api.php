@@ -85,7 +85,7 @@ Route::middleware('api')->group(function (): void {
     Route::post('/groups/store', [GroupController::class, 'store']);
     Route::post('/groups/delete/{id}', [GroupController::class, 'destroy']);
 
-    Route::get('groups/shifts', [ShiftController::class, 'index']);
+    Route::get('groups/{group_id}/shifts', [ShiftController::class, 'index']);
     Route::post('/groups/shifts/store', [ShiftController::class, 'store']);
     Route::post('/groups/shifts/{shift}/jobs', [ShiftController::class, 'storeJob']);
     Route::post('/groups/shifts/{shift}/staff', [ShiftController::class, 'storeStaff']);

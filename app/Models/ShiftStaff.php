@@ -15,4 +15,14 @@ class ShiftStaff extends Model
     {
         return $this->belongsTo(Shift::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function shift_job()
+    {
+        return $this->belongsTo(ShiftJob::class);
+    }
 }
