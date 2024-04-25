@@ -16,8 +16,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Group::class);
             $table->text('work_place');
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
+            $table->timestamp('start_time')->nullable();
+            $table->timestamp('end_time')->nullable();
             $table->timestamps();
         });
     }
