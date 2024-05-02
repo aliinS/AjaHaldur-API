@@ -26,20 +26,18 @@ class TableController extends Controller
      */
     public function index(Request $request)
     {
-        // $perPage = $request->get('amount', 4);
-        // $page = $request->get('page', 1);
+        $perPage = $request->get('amount', 4);
+        $page = $request->get('page', 1);
 
-        // Paginator::currentPageResolver(function () use ($page) {
-        //     return $page;
-        // });
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
 
-        // $tables = Table::where('owner_id', auth()->user()->id)->where('type', 'personal')
-        //     ->orderBy('updated_at', 'desc')
-        //     ->paginate($perPage);
+        $tables = Table::where('owner_id', auth()->user()->id)->where('type', 'personal')
+            ->orderBy('updated_at', 'desc')
+            ->paginate($perPage);
 
-        // return response()->json($tables);
-
-        return response()->json(['message' => 'Tabelid edukalt laetud']);
+        return response()->json($tables);
     }
 
     /**
