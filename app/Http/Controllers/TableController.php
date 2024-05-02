@@ -16,23 +16,30 @@ class TableController extends Controller
         $this->middleware('auth:api', ['except' => ['register', 'login']]);
     }
 
+    public function __invoke()
+    {
+        
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $perPage = $request->get('amount', 4);
-        $page = $request->get('page', 1);
+        // $perPage = $request->get('amount', 4);
+        // $page = $request->get('page', 1);
 
-        Paginator::currentPageResolver(function () use ($page) {
-            return $page;
-        });
+        // Paginator::currentPageResolver(function () use ($page) {
+        //     return $page;
+        // });
 
-        $tables = Table::where('owner_id', auth()->user()->id)->where('type', 'personal')
-            ->orderBy('updated_at', 'desc')
-            ->paginate($perPage);
+        // $tables = Table::where('owner_id', auth()->user()->id)->where('type', 'personal')
+        //     ->orderBy('updated_at', 'desc')
+        //     ->paginate($perPage);
 
-        return response()->json($tables);
+        // return response()->json($tables);
+
+        return response()->json(['message' => 'Tabelid edukalt laetud']);
     }
 
     /**
@@ -107,9 +114,8 @@ class TableController extends Controller
      */
     public function update(Request $request, String $id)
     {
-        // $table = Table::find($id);
-        // return response()->json(['table' => $table, 'message' => 'Update successful'], 200);
-        Log::info("response");
+        $table = Table::find($id);
+        return response()->json(['table' => $table, 'message' => 'Update successful'], 200);
     }
 
     /**
