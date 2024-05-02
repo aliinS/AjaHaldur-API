@@ -18,7 +18,6 @@ class TableController extends Controller
 
     public function __invoke()
     {
-        
     }
 
     /**
@@ -91,7 +90,7 @@ class TableController extends Controller
         $table = Table::with(['content' => function ($query) {
             $query->orderBy('id', 'desc');
         }])->find($id);
-        
+
         if (!$table) {
             return response()->json(['message' => 'Tabel pole olemas'], 404);
         }
@@ -113,27 +112,10 @@ class TableController extends Controller
     public function update(Request $request, String $id)
     {
         $table = Table::find($id);
-
         if (!$table) {
             return response()->json(['message' => 'Table not found'], 404);
         }
-
-        $request->validate([
-            'title' => 'string|max:255',
-            'type' => 'string|max:255',
-            
-        ]);
-
-        if ($request->type == 'personal' || $request->type == 'group') {
-            // do nothing
-        } else {
-            return response()->json(['message' => "Süsteemi viga: TAB-001"], 400);
-        }
-
-        
-        $table::update($request->all()); 
-
-        
+        $table->update($request->all());
         return response()->json(['table' => $table, 'message' => 'Update successful'], 200);
     }
 
