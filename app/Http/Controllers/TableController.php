@@ -119,8 +119,9 @@ class TableController extends Controller
         }
 
         $request->validate([
-            'title' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
+            'title' => 'string|max:255',
+            'type' => 'string|max:255',
+            
         ]);
 
         if ($request->type == 'personal' || $request->type == 'group') {
