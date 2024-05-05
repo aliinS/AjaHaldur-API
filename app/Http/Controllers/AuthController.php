@@ -19,7 +19,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['register', 'login']]);
+        $this->middleware('auth:sanctum', ['except' => ['register', 'login']]);
     }
 
     // update user data
@@ -106,30 +106,17 @@ class AuthController extends Controller
     // Login an existing user
     public function login(Request $request)
     {
-        // Log::info($request);
         $credentials = $request->only('email', 'password');
 
-        // $credentials->validate([
-        //     'email' => 'required|string|email',
-        //     'password' => 'required|string',
-        // ]);
+        $user = User::where('email', $credentials['email'])->first();
 
-        // if (Auth::attempt(['email' => $credentials->email, 'password' => $credentials->password])) {
-        //     $user = Auth::user();
-        //     $token = $user->createToken('authToken')->accessToken;
-
-        //     return response()->json(['user' => $user, 'access_token' => $token], 200);
-        // } else {
-        //     return response()->json(['message' => 'Invalid credentials'], 401);
-        // }
-
-        $token = auth()->attempt($credentials);
-
-        if (!$token) {
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json(['token' => $token]);
     }
 
     // Logout

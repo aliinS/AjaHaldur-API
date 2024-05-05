@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Log;
 
 class ShiftController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum', ['except' => ['register', 'login']]);
+    }
+    
     /**
      * Display a listing of the resource.
      */

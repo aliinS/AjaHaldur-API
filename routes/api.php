@@ -43,6 +43,7 @@ Route::get('/test', function () {
 // // Login an existing user
 // Route::post('/login', [AuthController::class, 'login']);
 
+Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 // api endpoitn to get servers time
@@ -52,9 +53,7 @@ Route::group([
     $router->post('refresh', [RefreshToken::class, 'refresh']);
 });
 
-Route::get('/data/system/time', [SystemController::class, 'time']);
-Route::middleware('api')->group(function (): void {
-    Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
 
@@ -68,13 +67,13 @@ Route::middleware('api')->group(function (): void {
     Route::get('/tables/hours/{id}', [TableController::class, 'hours']);
     Route::post('/tables/update/{id}', [TableController::class, 'update']);
     Route::delete('/tables/delete/{tableContent}', [TableController::class, 'destroy']);
-    
+
     Route::post('/tables/content/store', [TableContentController::class, 'store']);
     Route::post('/tables/content/update/{id}', [TableContentController::class, 'update']);
     Route::delete('/tables/content/delete/{id}', [TableContentController::class, 'destroy']);
     // table content filter endpoint
     Route::get('/tables/content/filter/{id}', [TableContentController::class, 'filter']);
-    
+
     Route::get('groups', [GroupController::class, 'index']);
     Route::get('/groups/show/{id}', [GroupController::class, 'show']);
     Route::post('/groups/update/{group}', [GroupController::class, 'update']);
@@ -93,3 +92,5 @@ Route::middleware('api')->group(function (): void {
     Route::post('/groups/shifts/{shift}/update', [ShiftController::class, 'update']);
     Route::post('/groups/shifts/{shift}/delete', [ShiftController::class, 'destroy']);
 });
+
+Route::get('/data/system/time', [SystemController::class, 'time']);

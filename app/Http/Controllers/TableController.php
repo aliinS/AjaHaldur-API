@@ -13,11 +13,7 @@ class TableController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['register', 'login']]);
-    }
-
-    public function __invoke()
-    {
+        $this->middleware('auth:sanctum', ['except' => ['register', 'login']]);
     }
 
     /**

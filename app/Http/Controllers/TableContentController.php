@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Log;
 class TableContentController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum', ['except' => ['register', 'login']]);
+    }
+    
     // filter function with from and to times
     public function filter(Request $request, $id)
     {

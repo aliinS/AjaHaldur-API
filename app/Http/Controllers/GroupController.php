@@ -14,6 +14,12 @@ use PhpParser\Node\Stmt\GroupUse;
 
 class GroupController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum', ['except' => ['register', 'login']]);
+    }
+    
     /**
      * Display a listing of the resource.
      */
