@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\RefreshToken;
 use App\Http\Controllers\ShiftController;
@@ -91,6 +92,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/groups/shifts/{shift}/show', [ShiftController::class, 'show']);
     Route::post('/groups/shifts/{shift}/update', [ShiftController::class, 'update']);
     Route::post('/groups/shifts/{shift}/delete', [ShiftController::class, 'destroy']);
+
+    Route::get('/feedback', [FeedbackController::class, 'index']);
+    Route::get('/feedback/search', [FeedbackController::class, 'search']);
+    Route::post('/feedback/store', [FeedbackController::class, 'store']);
+    Route::get('/feedback/show/{feedback}', [FeedbackController::class, 'show']);
+    Route::post('/feedback/update/{feedback}', [FeedbackController::class, 'update']);
+    Route::post('/feedback/delete/{feedback}', [FeedbackController::class, 'destroy']);
 });
 
 Route::get('/data/system/time', [SystemController::class, 'time']);
