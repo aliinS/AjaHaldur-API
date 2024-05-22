@@ -45,8 +45,8 @@ class ShiftController extends Controller
         $request->validate([
             'group_id' => 'required|integer|exists:groups,id',
             'work_place' => 'required|string',
-            'start_time' => 'required|date_format:Y-m-d H:i:s',
-            'end_time' => 'required|date_format:Y-m-d H:i:s',
+            'start_time' => 'required',
+            'end_time' => 'required',
         ]);
 
 
