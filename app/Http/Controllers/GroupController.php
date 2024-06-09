@@ -157,7 +157,7 @@ class GroupController extends Controller
     {
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string',
         ]);
 
         $group = Group::create([
@@ -244,7 +244,7 @@ class GroupController extends Controller
     public function update(Request $request, Group $group)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string',
         ]);
 
         $group->update($request->all());

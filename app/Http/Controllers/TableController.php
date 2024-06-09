@@ -41,13 +41,18 @@ class TableController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
+            'title' => 'required|string',
+            'type' => 'required|string',
         ]);
 
+        if (strlen($request->title) > 255) {
+            return response()->json(['message' => 'Pealkiri ei tohi ületada 255 tähemärki'], 400);
+        }
+
         if ($request->type == 'personal' || $request->type == 'group') {
-            // do nothing
-        } else {
+            // do noting
+        }
+        else {
             return response()->json(['message' => "Süsteemi viga: TAB-001"], 400);
         }
 
