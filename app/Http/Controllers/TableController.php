@@ -43,6 +43,7 @@ class TableController extends Controller
         $request->validate([
             'title' => 'required|string',
             'type' => 'required|string',
+            'supports_time_range' => 'required|boolean',
         ]);
 
         if (strlen($request->title) > 255) {
@@ -60,6 +61,7 @@ class TableController extends Controller
             'title' => $request->title,
             'type' => $request->type,
             'owner_id' => auth()->user()->id,
+            'supports_time_range' => $request->supports_time_range,
         ]);
 
         return response()->json(['table' => $table, 'message' => 'Tabel edukalt loodud'], 201);
@@ -113,9 +115,24 @@ class TableController extends Controller
     public function update(Request $request, String $id)
     {
         $table = Table::find($id);
+
         if (!$table) {
             return response()->json(['message' => 'Table not found'], 404);
         }
+
+        if ($request->has('supports_time_range')) {
+            if ($table && $table->supports_time_range) {
+            return response()->json(['message' => 'supports_time_range cannot be changed after table creation'], 400);
+            }
+        }
+        // Check if request contains more variables than title
+        $requestKeys = array_keys($request->all());
+        $allowedKeys = ['title'];
+        $extraKeys = array_diff($requestKeys, $allowedKeys);
+        if (!empty($extraKeys)) {
+            return response()->json(['message' => 'Only title can be updated at this time'], 400);
+        }
+
         $table->update($request->all());
         return response()->json(['table' => $table, 'message' => 'Update successful'], 200);
     }
@@ -129,6 +146,9 @@ class TableController extends Controller
         if (!$table) {
             return response()->json(['message' => 'Table not found'], 404);
         }
+
+        $table->content()->delete();
+
         $table->delete();
         return response()->json(['message' => 'Deletion successful'], 200);
     }
