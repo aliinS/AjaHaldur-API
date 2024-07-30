@@ -131,7 +131,7 @@ class TableContentController extends Controller
             'location' => 'max:255',
             'start_time' => 'string',
             'end_time' => 'string',
-            'supports_time_range' => 'required|boolean',
+            'supports_time_range' => 'boolean',
         ]);
 
         $table = Table::find($tableContent->table_id);
