@@ -56,8 +56,8 @@ Route::group([
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('app/logout', [AuthController::class, 'app.logout']);
-
+    Route::post('app/logout', [AuthController::class, 'appLogout']);
+    
     Route::get('me', [AuthController::class, 'me']);
 
     Route::post('/user/update', [AuthController::class, 'update']);
