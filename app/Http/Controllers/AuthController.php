@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Faker\Generator as Faker;
+use Illuminate\Auth\Events\Registered;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
@@ -101,6 +102,27 @@ class AuthController extends Controller
         // $cookie = Cookie::make('token', $token, 1440, null, null, true, true);
 
         return response()->json(compact('user', 'token'), 201);
+    }
+
+    public function appRegister(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'email:dns,rfc', 'lowercase', 'max:255', 'unique:' . User::class],
+            'password' => ['required', 'string', 'min:6'],
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        // event(new Registered($user));
+
+        return response() ->json([
+            'token' => $user->createToken('auth_token')->plainTextToken
+        ]);
     }
 
     // Login an existing user

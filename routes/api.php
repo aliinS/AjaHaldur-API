@@ -46,6 +46,7 @@ Route::get('/test', function () {
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/app/register', [AuthController::class, 'appRegister']);
 
 // api endpoitn to get servers time
 Route::group([
