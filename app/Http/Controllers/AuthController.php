@@ -20,7 +20,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:sanctum', ['except' => ['register', 'login']]);
+        $this->middleware('auth:sanctum', ['except' => ['register', 'login', 'appRegister']]);
     }
 
     // update user data
@@ -106,10 +106,12 @@ class AuthController extends Controller
 
     public function appRegister(Request $request)
     {
+        $credentials = $request->only('name', 'email', 'password');
+
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'email:dns,rfc', 'lowercase', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'string', 'min:6'],
+            'name' => 'required|string|max:255|unique:users',
+            'email' => 'required|string|email|email:dns,rfc|unique:users|max:255',
+            'password' => 'required|string|min:6',
         ]);
 
         $user = User::create([
@@ -118,11 +120,12 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        // event(new Registered($user));
+        // return response()->json(['user' => $user, 'message' => 'Registration successful'], 201);
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response() ->json([
-            'token' => $user->createToken('auth_token')->plainTextToken
-        ]);
+        // $cookie = Cookie::make('token', $token, 1440, null, null, true, true);
+
+        return response()->json(compact('token'), 201);
     }
 
     // Login an existing user
