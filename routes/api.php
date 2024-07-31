@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\SystemController;
 use App\Http\Controllers\TableContentController;
 use App\Http\Controllers\TableController;
+use Illuminate\Support\Facades\Password;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +49,8 @@ Route::get('/test', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/app/register', [AuthController::class, 'appRegister']);
+
+Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
 
 // api endpoitn to get servers time
 Route::group([
