@@ -66,6 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('me', [AuthController::class, 'me']);
 
     Route::post('/user/avatar', [AuthController::class, 'updateAvatar']);
+    Route::delete('/user/avatar', [AuthController::class, 'deleteAvatar']);
 
     Route::post('/user/update', [AuthController::class, 'update']);
     // TODO: make it useable

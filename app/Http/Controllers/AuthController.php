@@ -272,4 +272,11 @@ class AuthController extends Controller
             'avatar' => $avatarUrls
         ], 200);
     }
+
+    public function deleteAvatar(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+        $user->update(['avatar_original' => null, 'avatar_medium' => null, 'avatar_small' => null, 'avatar_thumbnail' => null]);
+        return response()->json(['message' => 'Avatar deleted successfully'], 200);
+    }
 }
