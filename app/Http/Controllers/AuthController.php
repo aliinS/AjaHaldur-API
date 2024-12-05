@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Faker\Generator as Faker;
 use Illuminate\Auth\Events\Registered;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\DB;
 use Spatie\Image\Image;
 use Spatie\Image\Manipulations;
 use Illuminate\Support\Facades\Storage;
@@ -23,7 +23,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:sanctum', ['except' => ['register', 'login', 'appRegister']]);
+        $this->middleware('auth:sanctum', ['except' => ['login', 'register', 'appRegister']]);
     }
 
     // update user data
@@ -135,7 +135,6 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-
         $user = User::where('email', $credentials['email'])->first();
 
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
@@ -143,14 +142,13 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json(['token' => $token]);
     }
 
     // Logout
-    public function logout()
+    public function logout(Request $request)
     {
-        auth()->logout();
+        $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Successfully logged out']);
     }
     
@@ -172,32 +170,6 @@ class AuthController extends Controller
         }
 
         return response()->json($user);
-    }
-
-    public function refresh()
-    {
-        return $this->respondWithToken(auth()->refresh());
-    }
-
-    protected function respondWithToken($token)
-    {
-        $cookie = Cookie::make('token', $token, 1440, null, null, true, true);
-
-        // $ttl = auth()->factory()->getTTL(); // Get the TTL value
-        $ttl = 120; // Get the TTL value
-        $expiration = now()->addMinutes($ttl);
-
-        // Generate a refresh token
-        // $refreshToken = JWTAuth::refresh($token, true);
-
-        // Log::info($ttl);
-
-        return response()->json([
-            'access_token' => $token,
-            // 'refresh_token' => $refreshToken, // Include the refresh token in the response
-            'token_type' => 'bearer',
-            'expires_in' => $expiration,
-        ])->withCookie($cookie);
     }
 
     public function updateAvatar(Request $request)
