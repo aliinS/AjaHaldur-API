@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Log;
 use Faker\Generator as Faker;
 use Illuminate\Auth\Events\Registered;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Spatie\Image\Image;
+use Spatie\Image\Manipulations;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -97,7 +100,7 @@ class AuthController extends Controller
         // return response()->json(['user' => $user, 'message' => 'Registration successful'], 201);
         $token = Auth::guard('api')->login($user);
 
-        $token = $this->respondWithToken($token)->original;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         // $cookie = Cookie::make('token', $token, 1440, null, null, true, true);
 
@@ -159,7 +162,16 @@ class AuthController extends Controller
 
     public function me()
     {
-        return response()->json(auth()->user());
+        $user = auth()->user();
+
+        if ($user->avatar_original) {
+            $user->avatar_original = asset('storage/' . $user->avatar_original);
+            $user->avatar_medium = asset('storage/' . $user->avatar_medium);
+            $user->avatar_small = asset('storage/' . $user->avatar_small); 
+            $user->avatar_thumbnail = asset('storage/' . $user->avatar_thumbnail);
+        }
+
+        return response()->json($user);
     }
 
     public function refresh()
@@ -186,5 +198,78 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => $expiration,
         ])->withCookie($cookie);
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $avatar = $request->file('avatar');
+        $timestamp = time();
+        $extension = $avatar->getClientOriginalExtension();
+        
+        $avatarPaths = [];
+        
+        // Store original file first
+        $originalFileName = "{$timestamp}_original.{$extension}";
+        $storagePath = "avatars/{$originalFileName}";
+        Storage::disk('public')->put($storagePath, file_get_contents($avatar));
+        $avatarPaths["avatar_original"] = $storagePath;
+
+        // Generate different sizes
+        $sizes = [
+            'medium' => ['width' => 600, 'height' => 600],
+            'small' => ['width' => 300, 'height' => 300],
+            'thumbnail' => ['width' => 150, 'height' => 150],
+        ];
+
+        foreach ($sizes as $size => $dimensions) {
+            $fileName = "{$timestamp}_{$size}.{$extension}";
+            $tempPath = storage_path("app/temp/{$fileName}");
+            
+            // Ensure temp directory exists
+            if (!file_exists(storage_path('app/temp'))) {
+                mkdir(storage_path('app/temp'), 0777, true);
+            }
+
+            // Create optimized image
+            Image::load($avatar)
+                ->optimize()
+                ->width($dimensions['width'])
+                ->height($dimensions['height'])
+                ->save($tempPath);
+
+            // Store in public storage and get URL
+            $storagePath = "avatars/{$fileName}";
+            Storage::disk('public')->put($storagePath, file_get_contents($tempPath));
+            unlink($tempPath);
+                
+            $avatarPaths["avatar_{$size}"] = $storagePath;
+        }
+
+        // Delete old avatars
+        $sizeKeys = array_merge(['original'], array_keys($sizes));
+        foreach ($sizeKeys as $size) {
+            $oldAvatar = $user["avatar_{$size}"];
+            if ($oldAvatar && Storage::disk('public')->exists($oldAvatar)) {
+                Storage::disk('public')->delete($oldAvatar);
+            }
+        }
+
+        $user->update($avatarPaths);
+
+        // Generate full URLs for response
+        $avatarUrls = array_map(function($path) {
+            return asset('storage/' . $path);
+        }, $avatarPaths);
+
+        return response()->json([
+            'message' => 'Avatar updated successfully',
+            'avatar' => $avatarUrls
+        ], 200);
     }
 }
