@@ -103,7 +103,7 @@ class TableContentController extends Controller
      */
     public function show(TableContent $tableContent)
     {
-        //
+        return response()->json(['content' => $tableContent], 200);
     }
 
     /**

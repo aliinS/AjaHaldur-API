@@ -79,6 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tables/update/{id}', [TableController::class, 'update']);
     Route::delete('/tables/delete/{tableContent}', [TableController::class, 'destroy']);
 
+    Route::get('/tables/content/show/{id}', [TableContentController::class, 'show']);
     Route::post('/tables/content/store', [TableContentController::class, 'store']);
     Route::post('/tables/content/update/{id}', [TableContentController::class, 'update']);
     Route::delete('/tables/content/delete/{id}', [TableContentController::class, 'destroy']);
