@@ -17,13 +17,49 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Image\Image;
 use Spatie\Image\Manipulations;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
 
     public function __construct()
     {
-        $this->middleware('auth:sanctum', ['except' => ['login', 'register', 'appRegister']]);
+        $this->middleware('auth:sanctum', ['except' => ['login', 'register', 'appRegister', 'getAvatar']]);
+
+    }
+
+    public function getAvatar($uuid, $size = 'original')
+    {
+        $avatarField = 'avatar_' . $size;
+        
+        $user = User::where('uuid', $uuid)->first();
+        
+        if (!$user || !$user->$avatarField) {
+            return $this->getDefaultAvatar();
+        }
+        
+        $path = storage_path('app/public/' . $user->$avatarField);
+        
+        if (!file_exists($path)) {
+            return $this->getDefaultAvatar();
+        }
+        
+        return response()->file($path);
+    }
+
+    private function getDefaultAvatar()
+    {
+        $avatarName = 'default-avatar.jpg';
+        $defaultAvatar = url($avatarName);
+        $defaultPath = public_path($avatarName);
+
+        // dd($defaultPath);
+        
+        if (!file_exists($defaultPath)) {
+            return response()->json(['error' => 'Default avatar not found'], 404);
+        }
+        
+        return response()->file($defaultPath);
     }
 
     // update user data
@@ -51,31 +87,38 @@ class AuthController extends Controller
     public function delete(Request $request)
     {
         $user = User::with('groups')->find(Auth::user()->id);
-
+        
         $personalTables = Table::where('type', 'personal')->where('owner_id', $user->id)->get();
-        // $groupTables = Table::where('type', 'group')->where('owner_id', $user->id)->get();
-        $groups = $user->groups;
-
-
-
-        // loop each group to create a list of pivots, so they can be deleted too
-        foreach ($groups as $group) {
-            $groupTables = $group->pivot;
-            // GroupUser::where('group_id', $groupTable->group_id)->where('user_id', $groupTable->user_id)->get();
-            foreach ($groupTables as $groupTable) {
-                // Log::info($groupTable);
-            }
-            // GroupUser::where('group_id', $groupTables->group_id)->where('user_id', $groupTables->user_id)->delete();
-            // Log::info($groupTables);
-            // Log::info(GroupUser::where('group_id', $groupTables->group_id)->where('user_id', $groupTables->user_id)->get());
-
-            // Group::where('id', $groupTables->group_id);
-            // Log::info(Group::where('id', $groupTables->group_id));
+        $myGroups = $user->groups;
+        
+        foreach ($personalTables as $personalTable) {
+            $personalTable->delete();
         }
 
-        // Log::info($groups);
+        foreach ($myGroups as $group) {
+            if ($group->owner_id == $user->id) {
+                $groupInstance = Group::find($group->id);
 
-        // $user->delete();
+                if (count($groupInstance->membersList) == 1) {
+                    if ($groupInstance->membersList[0]->id == $user->id) {
+                        foreach ($groupInstance->tables as $table) {
+                            $table->delete();
+                        }
+                        $groupInstance->delete();
+                    }
+                }
+            }
+        }
+
+        $user->name = '_deleted_' . Str::uuid();
+        $user->email = '_deleted_' . Str::uuid();
+        $user->password = bcrypt('_deleted_' . Str::uuid());
+        $user->avatar_original = null;
+        $user->avatar_medium = null;
+        $user->avatar_small = null;
+        $user->avatar_thumbnail = null;
+        $user->deleted = true;
+        $user->save();
 
         return response()->json(['message' => 'User deleted successfully'], 200);
     }

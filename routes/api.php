@@ -52,6 +52,9 @@ Route::post('/app/register', [AuthController::class, 'appRegister']);
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
 
+
+Route::get('avatar/{uuid}/{size?}', [AuthController::class, 'getAvatar']);
+
 // api endpoitn to get servers time
 Route::group([
     'middleware' => ['api', 'jwt.refresh'],
@@ -62,7 +65,7 @@ Route::group([
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('app/logout', [AuthController::class, 'appLogout']);
-    
+
     Route::get('me', [AuthController::class, 'me']);
 
     Route::post('/user/avatar', [AuthController::class, 'updateAvatar']);
@@ -70,7 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/user/update', [AuthController::class, 'update']);
     // TODO: make it useable
-    // Route::post('/user/delete', [AuthController::class, 'delete']);
+    Route::delete('/user/delete', [AuthController::class, 'delete']);
 
     Route::get('tables/personal', [TableController::class, 'index']);
     Route::post('/tables/store', [TableController::class, 'store']);
