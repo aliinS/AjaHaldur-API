@@ -101,9 +101,10 @@ class TableContentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(TableContent $tableContent)
+    public function show(String $id)
     {
-        return response()->json(['content' => $tableContent], 200);
+        $tableContent = TableContent::find($id);
+        return response()->json($tableContent, 200);
     }
 
     /**
